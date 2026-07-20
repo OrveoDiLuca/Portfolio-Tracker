@@ -1,0 +1,56 @@
+<div class="p-6 bg-slate-950 min-h-screen text-white">
+    <div class="flex items-start justify-between">
+        <div class="flex items-center gap-4">
+            <div class="px-4 py-3 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm">
+                {{ assetSymbol }}
+            </div>
+            <div>
+                <p class="text-2xl font-bold">{{ assetName }}</p>
+                <p class="text-slate-400 text-sm">{{ assetTypeLabel }}</p>
+            </div>
+        </div>
+
+        <div class="flex gap-3">
+            <a [routerLink]="['/edit-position', Id]"
+                class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-semibold">
+                Edit
+            </a>
+            <app-delete-position [positionId]="Id" />
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <div class="flex items-baseline gap-3">
+            <p class="text-4xl font-bold font-mono">
+                {{ currentPrice() !== null ? (currentPrice() | currency) : '—' }}
+            </p>
+            @if (gainLoss() !== null) {
+            <span class="font-mono font-semibold" [class.text-green-400]="gainLoss()! >= 0"
+                [class.text-red-400]="gainLoss()! < 0">
+                {{ gainLoss()! >= 0 ? '+' : '' }}{{ gainLoss() | currency }}
+            </span>
+            }
+        </div>
+        <p class="text-slate-500 text-sm mt-1">Current price · simulated</p>
+    </div>
+
+    @if (priceError()) {
+    <p class="text-red-400 text-sm mt-2">{{ priceError() }}</p>
+    }
+    <div class="grid grid-cols-3 gap-4 mt-6">
+        <app-info-card label="Quantity" [value]="quantity.toString()" />
+    
+      <app-info-card label="Avg Cost" [value]="(avgCost | currency) ?? '—'" />
+    
+      <app-info-card label="Purchase Date" [value]="purchaseDate" />
+    
+      <app-info-card label="Cost Basis" [value]="(costBasis() | currency) ?? '—'" />
+    
+      <app-info-card label="Market Value" [value]="(marketValue() | currency) ?? '—'" />
+    
+      <app-info-card label="Total Gain / Loss"
+          [value]="gainLoss() === null ? '—' : (gainLoss()! >= 0 ? '+' : '') + (gainLoss() | currency)"
+          [sublabel]="pnlPercentage() === null ? null : (pnlPercentage()! >= 0 ? '+' : '') + (pnlPercentage() | percent:'1.2-2')"
+          [tone]="gainLoss() === null ? 'default' : (gainLoss()! >= 0 ? 'positive' : 'negative')" />
+    </div>
+</div>

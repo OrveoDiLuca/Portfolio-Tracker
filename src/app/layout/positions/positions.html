@@ -1,0 +1,62 @@
+<div class="p-6 bg-slate-950 min-h-screen text-white">
+  <div class="flex items-center justify-between mb-1">
+    <div>
+      <h1 class="text-2xl font-bold">Positions</h1>
+      <p class="text-slate-400 text-sm">{{ portfolio.position().length }} positions</p>
+    </div>
+    <a routerLink="/add-position"
+      class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium">
+      + Add Position
+    </a>
+  </div>
+
+  @if (portfolio.priceError()) {
+  <p class="text-red-400 text-sm mt-2">{{ portfolio.priceError() }}</p>
+  }
+
+  @if (portfolio.position().length === 0) {
+  <p class="text-slate-400 mt-6">Todavía no agregaste ninguna posición.</p>
+  } @else {
+  <table class="w-full mt-6 border-collapse">
+    <thead>
+      <tr class="text-left text-xs text-slate-500 border-b border-slate-800">
+        <th class="py-2 font-normal">ASSET</th>
+        <th class="py-2 font-normal">QTY</th>
+        <th class="py-2 font-normal">AVG COST</th>
+        <th class="py-2 font-normal">PRICE</th>
+        <th class="py-2 font-normal">VALUE</th>
+        <th class="py-2 font-normal">P&L</th>
+        <th class="py-2 font-normal">P&L %</th>
+        <th class="py-2 font-normal"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.id) {
+      <tr class="border-b border-slate-900" [routerLink]="['/position', row.id]">
+        <td class="py-3">
+          <p class="font-semibold">{{ row.assetSymbol }}</p>
+          <p class="text-slate-500 text-xs">{{ row.assetName }}</p>
+        </td>
+        <td class="py-3">{{ row.quantity }}</td>
+        <td class="py-3">{{ row.avgCost | currency }}</td>
+        <td class="py-3">{{ row.currentPrice !== null ? (row.currentPrice | currency) : '—' }}</td>
+        <td class="py-3">{{ row.value !== null ? (row.value | currency) : '—' }}</td>
+        <td class="py-3" [class.text-green-400]="(row.pnl ?? 0) >= 0" [class.text-red-400]="(row.pnl ?? 0) < 0">
+          {{ row.pnl !== null ? ((row.pnl >= 0 ? '+' : '') + (row.pnl | currency)) : '—' }}
+        </td>
+        <td class="py-3" [class.text-green-400]="(row.pnlPercent ?? 0) >= 0"
+          [class.text-red-400]="(row.pnlPercent ?? 0) < 0">
+          {{ row.pnlPercent !== null ? ((row.pnlPercent >= 0 ? '+' : '') + (row.pnlPercent | percent:'1.2-2')) : '—' }}
+        </td>
+        <td class="py-3 text-right space-x-2" (click)="$event.stopPropagation()">
+          <a [routerLink]="['/edit-position', row.id]" class="text-blue-400 hover:text-blue-300 px-2">
+            Editar
+          </a>
+          <app-delete-position [positionId]="row.id"/>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>

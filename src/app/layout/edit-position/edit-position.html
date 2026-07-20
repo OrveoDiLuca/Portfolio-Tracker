@@ -1,0 +1,79 @@
+<div class="p-6 bg-slate-950 min-h-screen text-white">
+    <nav class="text-sm text-slate-500 mb-2">
+      <a routerLink="/positions" class="hover:text-slate-300">Positions</a>
+      <span class="mx-1">/</span>
+      <span class="text-slate-300">Edit Position</span>
+    </nav>
+
+    <h1 class="text-2xl font-bold mb-6">Edit Position</h1>
+
+    @if (notFound) {
+      <p class="text-red-400">No se encontró la posición.</p>
+    } @else {
+      <div class="bg-slate-900 border border-slate-700 rounded-lg p-6 max-w-2xl space-y-5">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Asset</label>
+          <p class="px-3 py-2 text-slate-300">{{ assetLabel }}</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-slate-400 mb-1">Quantity</label>
+            <input
+              type="number"
+              min="0"
+              step="any"
+              class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+              [ngModel]="quantity()"
+              (ngModelChange)="quantity.set($event)"
+            />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-400 mb-1">Purchase Price (USD)</label>
+            <input
+              type="number"
+              min="0"
+              step="any"
+              class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+              [ngModel]="purchasePrice()"
+              (ngModelChange)="purchasePrice.set($event)"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Purchase Date</label>
+          <input
+            type="date"
+            class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+            [ngModel]="purchaseDate()"
+            (ngModelChange)="purchaseDate.set($event)"
+          />
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-md p-4">
+          <p class="text-xs text-slate-500">Cost Basis</p>
+          <p class="font-mono">${{ costBasis().toFixed(2) }}</p>
+        </div>
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            type="button"
+            class="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md text-sm font-medium"
+            [disabled]="!canSubmitted()"
+            (click)="save()"
+          >
+            Save Changes
+          </button>
+          <button
+            type="button"
+            class="border border-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-md text-sm font-medium"
+            (click)="cancel()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    }
+  </div>

@@ -1,0 +1,125 @@
+ <div class="p-6 bg-slate-950 min-h-screen text-white">
+    <nav class="text-sm text-slate-500 mb-2">
+      <a routerLink="/positions" class="hover:text-slate-300">Positions</a>
+      <span class="mx-1">/</span>
+      <span class="text-slate-300">Add Position</span>
+    </nav>
+
+    <h1 class="text-2xl font-bold mb-6">Add Position</h1>
+  
+    <div class="bg-slate-900 border border-slate-700 rounded-lg p-6 max-w-2xl space-y-5">
+      <div class="relative">
+        <label class="block text-sm text-slate-400 mb-1">Asset</label>
+        <input
+          type="text"
+          placeholder="Buscar activo..."
+          class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+  
+        @if (searching()) {
+          <p class="text-blue-400 text-xs mt-1">Buscando...</p>
+        }
+        @if (searchError()) {
+          <p class="text-red-400 text-xs mt-1">{{ searchError() }}</p>
+        }
+
+        @if (searchResults().length > 0) {
+          <ul class="absolute z-10 mt-1 w-full bg-slate-900 border border-slate-700 rounded-md divide-y divide-slate-800 max-h-64 overflow-auto">
+            @for (coin of searchResults(); track coin.id) {
+              <li>
+                <button
+                  type="button"
+                  class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-slate-800"
+                  (click)="selectAsset(coin)"
+                >
+                  <img [src]="coin.thumb" alt="" class="w-5 h-5 rounded-full" />
+                  <span class="text-sm">{{ coin.name }}</span>
+                  <span class="text-slate-400 text-xs uppercase ml-auto">{{ coin.symbol }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Quantity</label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+            [ngModel]="quantity()"
+            (ngModelChange)="quantity.set($event)"
+          />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Purchase Price (USD)</label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+            [ngModel]="purchasePrice()"
+            (ngModelChange)="purchasePrice.set($event)"
+          />
+        </div>
+      </div>
+  
+      <div>
+        <label class="block text-sm text-slate-400 mb-1">Purchase Date</label>
+        <input
+          type="date"
+          class="w-full bg-slate-950 border border-slate-700 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+          [ngModel]="purchaseDate()"
+          (ngModelChange)="purchaseDate.set($event)"
+        />
+      </div>
+  
+      <div class="bg-slate-950 border border-slate-800 rounded-md p-4 grid grid-cols-3 gap-4">
+        <div>
+          <p class="text-xs text-slate-500">Current Price</p>
+          <p class="font-mono">{{ currentPrice() !== null ? ('$' + currentPrice()!.toFixed(2)) : '—' }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500">Cost Basis</p>
+          <p class="font-mono">${{ costBasis().toFixed(2) }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500">Est. P&L</p>
+          <p
+            class="font-mono"
+            [class.text-green-400]="(estimatedPnL() ?? 0) >= 0"
+            [class.text-red-400]="(estimatedPnL() ?? 0) < 0"
+          >
+            {{ estimatedPnL() !== null ? ((estimatedPnL()! >= 0 ? '+' : '') + '$' + estimatedPnL()!.toFixed(2)) : '—' }}
+          </p>
+        </div>
+      </div>
+  
+      @if (priceError()) {
+        <p class="text-red-400 text-xs">{{ priceError() }}</p>
+      }
+
+      <div class="flex gap-3">
+        <button
+          type="button"
+          class="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md text-sm font-medium"
+          [disabled]="!canSubmit()"
+          (click)="addPosition()"
+        >
+          Add Position
+        </button>
+        <button
+          type="button"
+          class="border border-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-md text-sm font-medium"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
